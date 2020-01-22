@@ -5,6 +5,12 @@ VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoT_KU", "IoT_KU.vcxproj", "{C5F80730-F44F-4478-BDAE-6634EFC2CA88}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQTT", "..\libraries\MQTT\MQTT.vcxitems", "{86B66975-4619-4FB9-996A-F5A160A40874}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WiFiNINA", "..\libraries\WiFiNINA\WiFiNINA.vcxitems", "{025046B4-F819-4F7B-AE6E-1B2EBB22015B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SPI", "..\..\..\AppData\Local\arduino15\packages\arduino\hardware\samd\1.8.3\libraries\SPI\SPI.vcxitems", "{D287786A-E8CE-45D0-B0D2-2375868FBA6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
