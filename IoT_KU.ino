@@ -1,37 +1,23 @@
-// Visual Micro is in vMicro>General>Tutorial Mode
-// 
-/*
-    Name:       IoT_KU.ino
-    Created:	11.12.2019 13:01:59
-    Author:     DESKTOP-DB8RJ3G\geozu
-*/
+// Init of Pin Values to Sensor Data
+int triggerUS = 5; //Trigger Pin Ultrasonic
+int echoUS = 6; //Echo Pin Ultrasonic
+int triggerLB = 4; //Trigger Pin Lightbridge
+int dataFS = A0; //Analog Input of Forcesensor
 
-// Define User Types below here or use a .h file
-//
-
-// Define Function Prototypes that use User Types below here or use a .h file
-//
-
-// Define Functions below here or use other .ino or cpp files
-//
-
-int triggerUS = 5;
-int echoUS = 6;
-int triggerLB = 4;
-int dataFS = A0;
-
-
-int dataLB = 0;
-int durationUS = 0;
+// Init vars needed for sensors
+int dataLB = 0; //current state of Lightbridge
+int durationUS = 0; //
 int distanceUS = 0;
 double rawData = 0;
 int percent = 0;
 
+//Init error vars
+int errorUS = 0; //Error Var for Ultrasonic 
+int errorLB = 0; //Error Var for Lightbridge
+int errorFS = 0; //Error Var for Forcesensor
 
-int errorUS = 0;
-int errorLB = 0;
-int errorFS = 0;
 
+//Init functions
 int ultrasonic();
 
 int lightbarrier();
@@ -55,18 +41,10 @@ void setup()
 // Add the main program code into the continuous loop() function
 void loop()
 {
-	
 	errorUS = ultrasonic();
 	errorLB = lightbarrier();
 	errorFS = forcesensor();
-
-	
-
-	
-
-
-
-
+	serialData();
 }
 
 int ultrasonic()
