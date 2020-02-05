@@ -12,8 +12,8 @@
 #define MQTT_PW      "HIGHsecPW"
 
 //Set wifi settings
-const char ssid[] = "geomobil";
-const char pass[] = "GeoSpot1";
+const char ssid[] = "devices";
+const char pass[] = "Z6Opm2ezigp8";
 
 //Create Wifi and MQTT client 
 WiFiClient net;
