@@ -1,23 +1,33 @@
-#include <SPI.h>
-#include <WiFiNINA.h>
-#include <MQTTClient.h>
-#include <MQTT.h>
+#include <SPI.h> //Libary to communicate with the WiFi module
+#include <WiFiNINA.h> //Wifi Library 
+#include <MQTTClient.h> //Lib to create MQTT client
+#include <MQTT.h> //Lib to connect to MQTT server
+#include <WiFiUdp.h> //Lib for Network Transfer
 
+
+//Note: The parts of the code that controll the MQTT connection have been commented
+//out of the code because there is still ongoing investigation of errors.
 
 
 //define settings for Wifi and MQTT Broker
-#define BROKER_IP    "90.146.19.12"
+#define BROKER_IP    "192.168.137.1"
 #define DEV_NAME     "ardunioMKR"
-#define MQTT_USER    "mqttUser"
+#define MQTT_USER    "mqttuser"
 #define MQTT_PW      "HIGHsecPW"
 
 //Set wifi settings
-const char ssid[] = "devices";
-const char pass[] = "Z6Opm2ezigp8";
+const char ssid[] = "";
+const char pass[] = "";
+
+
+
 
 //Create Wifi and MQTT client 
 WiFiClient net;
 MQTTClient client;
+IPAddress ip;
+
+//Create var for measure of last MQTT send time
 unsigned long lastMillis = 0;
 
 // Init of Pin Values to Sensor Data
@@ -27,71 +37,94 @@ int triggerLB = 4; //Trigger Pin Lightbridge
 int dataFS = A0; //Analog Input of Forcesensor
 
 // Init vars needed for sensors
-int dataLB = 0; //current state of Lightbridge
-int durationUS = 0; //
-int distanceUS = 0;
-double rawData = 0;
-int percent = 0;
+int dataLB = 0; //Current state of Lightbridge
+int durationUS = 0; //Duration for ultrasonic signal 
+int distanceUS = 0; //Ultrasonic distance
+double rawData = 0; //Raw data of force sensor
+int percent = 0; //Percentage of force sensor
 
-//Init error vars
+//Init error vars CURRENTLY not in USE active use
 int errorUS = 0; //Error Var for Ultrasonic 
 int errorLB = 0; //Error Var for Lightbridge
 int errorFS = 0; //Error Var for Forcesensor
 
 
 //Init functions
-int ultrasonic();
 
-int lightbarrier();
+int ultrasonic(); //Function for measuring distance with US sensor
 
-int forcesensor();
+int lightbarrier(); //Function for LB input
 
-void serialData();
+int forcesensor(); //Function for getting and calculating FS data
 
-void connect();
+void serialData(); //Function for sending data over serial 
+
+void connect(); //Function for connecting to the WiFi network and the MQTT broker
+
+
 
 // The setup() function runs once each time the micro-controller starts
 void setup()
 {
+
+	//Define Inputs and Outputs for sensors
 	pinMode(triggerUS, OUTPUT);
 	pinMode(echoUS, INPUT);
 
 	pinMode(triggerLB, INPUT);
 	pinMode(dataFS, INPUT);
+	digitalWrite(triggerLB, HIGH);
 
+
+	//Open Serial Port with 9600 Baud Rate
 	Serial.begin(9600);
 
+
+	//Connect to wifi and connect to Broker and run connect function that makes sure that everything is connected
+	/*
 	WiFi.begin(ssid, pass);
 	client.begin(BROKER_IP, 1883, net);
 	connect();
-
+	*/
 
 }
 
 // Add the main program code into the continuous loop() function
 void loop()
 {
+	//Check if there are any errors that appear from one of the sensors; Currently no checking implemented
 	errorUS = ultrasonic();
 	errorLB = lightbarrier();
 	errorFS = forcesensor();
+
+	//Send serial Data
 	serialData();
 
+
+	//Send data over Wifi using MQTT; Work in Progress
+	/*
 	client.loop();
 	if (!client.connected()) {
 		connect();
 	}
 	if (millis() - lastMillis > 1000) {
 		lastMillis = millis();
-		client.publish("/hello", "world"); //PUBLISH TO TOPIC /hello MSG world
-		client.publish("/LB", "%i", dataLB); //PUBLISH Lightbride data to /LB
+		//client.publish("/hello", "world"); //PUBLISH TO TOPIC /hello MSG world
+		//client.publish("/LB", "%i", dataLB); //PUBLISH Lightbride data to /LB
 		client.publish("/US", "%i", distanceUS); //PUBLISH distance data to /US
-		client.publish("/FS", "%i", percent); //PUBLISH percentage of force sensor to /FS
+		//client.publish("/FS", "%i", percent); //PUBLISH percentage of force sensor to /FS
+		
 	}
+	*/
 
 }
 
+
+//Function for measuring distance with US sensor
 int ultrasonic()
 {
+
+	//Measure distance from Ultrasonic sensor
 	digitalWrite(triggerUS, LOW);
 	delay(5);
 	digitalWrite(triggerUS, HIGH);
@@ -100,19 +133,24 @@ int ultrasonic()
 	durationUS = pulseIn(echoUS, HIGH);
 	distanceUS = (durationUS / 2) * 0.03432;
 
+
+	//If the data would be smaller than 0 an error would be generated
 	if (distanceUS <= 0)
 	{
-		return 1;
+		return 1; //No Errors 
 	}
 	else
 	{
-		return 0;
+		return 0; //Error Code 0
 	}
 
 }
 
+
+//Function for LB input
 int lightbarrier()
 {
+	//Checks if something is in the way of the Lightbarrier
 	dataLB = digitalRead(triggerLB);
 	if (dataLB == 0)
 	{
@@ -123,20 +161,25 @@ int lightbarrier()
 		dataLB = 0;
 	}
 
+	//Return 0 because there is no Error checking
 	return 0;
 }
 
 
+//Function for getting and calculating FS data
 int forcesensor()
 {
-	
-	rawData = (analogRead(dataFS) / 1023);
-	percent = rawData * 100;
+	//Reads the analog value and converts it to a normalized value
+	rawData = (analogRead(dataFS) * 100 / 1023);
+	percent = rawData;
 
+	//Return 0 because there is no Error checking
 	return 0;
 
 }
 
+
+//Sending Data over Serial 
 void serialData()
 {
 
@@ -155,22 +198,46 @@ void serialData()
 	Serial.print(percent);
 	Serial.println();
 
+	//Debug Print of Force Sensor Data
+	/*
+	Serial.print(analogRead(dataFS));
+	Serial.println();
+	rawData = (analogRead(dataFS) * 100 / 1023);
+	Serial.println(rawData);
+	*/
+
 }
 
-void connect() {
+
+//Function to check the connection with WiFi, MQTT server and establish TOPICS for MQTT
+//This code is still work in progress
+void connect()
+{	
+	//Check if connected to wifi if not wait for connection
 	Serial.print("checking wifi...");
 	while (WiFi.status() != WL_CONNECTED) {
 		Serial.print(".");
 		delay(1000);
 	}
+
+	//Print IP to Serial 
+	ip = WiFi.localIP();
+	Serial.println(ip);
 	Serial.print("\nconnecting...");
+
+	//Check if connected to MQTT server if not wait for connection
 	while (!client.connect(DEV_NAME, MQTT_USER, MQTT_PW)) {
 		Serial.print(".");
 		delay(1000);
 	}
 	Serial.println("\nconnected!");
-	client.subscribe("/hello"); //Test subscribe
+
+	//Subscribe to Topics in MQTT
+	//client.subscribe("/hello"); //Test subscribe
 	client.subscribe("/LB"); //SUBSCRIBE TO TOPIC Lightbridge
 	client.subscribe("/US"); //SUBSCRIBE TO TOPIC Ultrasonic sensor
 	client.subscribe("/FS"); //SUBSCRIBE TO TOPIC Force
+
+
 }
+
