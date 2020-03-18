@@ -25,6 +25,7 @@
 #define USE_BQ24195L_PMIC
 #define __cplusplus 201103L
 //#define __GNUC__ 2
+#define _Pragma(x)
 #define __ARMCC_VERSION 6010050
 
 #define __PTRDIFF_TYPE__ int
@@ -267,11 +268,11 @@ _PTR memset(void *, int size_t)
 	return 0;
 }
 
-char 	*strcat(char *, const char *) {
+char 	strcat(char *, const char *) {
 	return 0;
 }
 
-char 	*strchr(const char *, int) {
+char 	strchr(const char *, int) {
 	return 0;
 }
 
@@ -283,7 +284,13 @@ int	 strcoll(const char *, const char *) {
 	return 0;
 }
 
-char 	*strcpy(char *__restrict, const char *) {
+char strcpy(const char *, const char *) {
+	return 0;
+}
+char strcpy(char *, const char *) {
+	return 0;
+}
+char strcpy(char *, char *) {
 	return 0;
 }
 
