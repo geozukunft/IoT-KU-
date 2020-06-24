@@ -106,18 +106,18 @@ void loop()
 	//Send data over Wifi using MQTT;
 	
 	client.loop();
-	if (!client.connected()) {
+	if (!client.connected()) { //Check if connection still up
 		connect();
 	}
-	if (millis() - lastMillis > 1000) {
+	if (millis() - lastMillis > 1000) { //Check if 1000ms have passed since the last run
 		lastMillis = millis();
 
 		client.publish("SL/hello", "world"); //PUBLISH TO TOPIC /hello MSG world
-		snprintf(dataLBstring, 16, "%i", dataLB);
+		snprintf(dataLBstring, 16, "%i", dataLB); //Convert Int to Char Array
 		client.publish("SL/LB", dataLBstring); //PUBLISH Lightbride data to /LB
-		snprintf(distanceUSstring, 16, "%i", distanceUS);
+		snprintf(distanceUSstring, 16, "%i", distanceUS); //Convert Int to Char Array
 		client.publish("SL/US", distanceUSstring); //PUBLISH distance data to /US
-		snprintf(percentstring, 16, "%i", percent);
+		snprintf(percentstring, 16, "%i", percent); //Convert Int to Char Array
 		client.publish("SL/FS", percentstring); //PUBLISH percentage of force sensor to /FS
 		Serial.println("Pushed MQTT");
 	}
