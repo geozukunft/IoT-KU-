@@ -11,7 +11,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WiFiNINA", "..\libraries\Wi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SPI", "..\..\..\AppData\Local\arduino15\packages\arduino\hardware\samd\1.8.3\libraries\SPI\SPI.vcxitems", "{D287786A-E8CE-45D0-B0D2-2375868FBA6A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MQTT-2.4.7", "..\libraries\MQTT\MQTT-2.4.7.vcxitems", "{1545EC15-922B-4C4B-AAAD-D40DC9B169DD}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\libraries\WiFiNINA\WiFiNINA.vcxitems*{025046b4-f819-4f7b-ae6e-1b2ebb22015b}*SharedItemsImports = 9
+		..\libraries\MQTT\MQTT-2.4.7.vcxitems*{1545ec15-922b-4c4b-aaad-d40dc9b169dd}*SharedItemsImports = 9
+		..\libraries\MQTT\MQTT.vcxitems*{86b66975-4619-4fb9-996a-f5a160a40874}*SharedItemsImports = 9
+		..\libraries\MQTT\MQTT-2.4.7.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		..\..\..\AppData\Local\arduino15\packages\arduino\hardware\samd\1.8.3\libraries\SPI\SPI.vcxitems*{d287786a-e8ce-45d0-b0d2-2375868fba6a}*SharedItemsImports = 9
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86

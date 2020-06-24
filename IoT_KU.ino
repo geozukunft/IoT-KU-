@@ -5,15 +5,14 @@
 #include <WiFiUdp.h> //Lib for Network Transfer
 
 
-//Note: The parts of the code that controll the MQTT connection have been commented
-//out of the code because there is still ongoing investigation of errors.
 
 
 //define settings for Wifi and MQTT Broker
-#define BROKER_IP    "192.168.137.1"
-#define DEV_NAME     "ardunioMKR"
-#define MQTT_USER    "mqttuser"
-#define MQTT_PW      "HIGHsecPW"
+#define BROKER_IP    "192.168.22.50"
+#define DEV_NAME     "LennertSchicklgruber"
+#define MQTT_USER    ""
+#define MQTT_PW      ""
+#define GROUPTOPIC	"SL"
 
 //Set wifi settings
 const char ssid[] = "";
@@ -38,10 +37,13 @@ int dataFS = A0; //Analog Input of Forcesensor
 
 // Init vars needed for sensors
 int dataLB = 0; //Current state of Lightbridge
+char dataLBstring[16] = ""; //Lightbridge String
 int durationUS = 0; //Duration for ultrasonic signal 
 int distanceUS = 0; //Ultrasonic distance
+char distanceUSstring[16] = ""; //String for distance
 double rawData = 0; //Raw data of force sensor
 int percent = 0; //Percentage of force sensor
+char percentstring[16] = ""; //String for percentage 
 
 //Init error vars CURRENTLY not in USE active use
 int errorUS = 0; //Error Var for Ultrasonic 
@@ -81,11 +83,11 @@ void setup()
 
 
 	//Connect to wifi and connect to Broker and run connect function that makes sure that everything is connected
-	/*
+	
 	WiFi.begin(ssid, pass);
 	client.begin(BROKER_IP, 1883, net);
 	connect();
-	*/
+	
 
 }
 
@@ -101,26 +103,30 @@ void loop()
 	serialData();
 
 
-	//Send data over Wifi using MQTT; Work in Progress
-	/*
+	//Send data over Wifi using MQTT;
+	
 	client.loop();
 	if (!client.connected()) {
 		connect();
 	}
 	if (millis() - lastMillis > 1000) {
 		lastMillis = millis();
-		//client.publish("/hello", "world"); //PUBLISH TO TOPIC /hello MSG world
-		//client.publish("/LB", "%i", dataLB); //PUBLISH Lightbride data to /LB
-		client.publish("/US", "%i", distanceUS); //PUBLISH distance data to /US
-		//client.publish("/FS", "%i", percent); //PUBLISH percentage of force sensor to /FS
-		
+
+		client.publish("SL/hello", "world"); //PUBLISH TO TOPIC /hello MSG world
+		snprintf(dataLBstring, 16, "%i", dataLB);
+		client.publish("SL/LB", dataLBstring); //PUBLISH Lightbride data to /LB
+		snprintf(distanceUSstring, 16, "%i", distanceUS);
+		client.publish("SL/US", distanceUSstring); //PUBLISH distance data to /US
+		snprintf(percentstring, 16, "%i", percent);
+		client.publish("SL/FS", percentstring); //PUBLISH percentage of force sensor to /FS
+		Serial.println("Pushed MQTT");
 	}
-	*/
+	
 
 }
 
 
-//Function for measuring distance with US sensor
+//Function for measuring distance with US sensor2
 int ultrasonic()
 {
 
@@ -234,9 +240,9 @@ void connect()
 
 	//Subscribe to Topics in MQTT
 	//client.subscribe("/hello"); //Test subscribe
-	client.subscribe("/LB"); //SUBSCRIBE TO TOPIC Lightbridge
-	client.subscribe("/US"); //SUBSCRIBE TO TOPIC Ultrasonic sensor
-	client.subscribe("/FS"); //SUBSCRIBE TO TOPIC Force
+	//client.subscribe("/LB"); //SUBSCRIBE TO TOPIC Lightbridge
+	//client.subscribe("/US"); //SUBSCRIBE TO TOPIC Ultrasonic sensor
+	//client.subscribe("/FS"); //SUBSCRIBE TO TOPIC Force
 
 
 }
